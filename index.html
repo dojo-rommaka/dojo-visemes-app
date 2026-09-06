@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dojo - Viseme & IPA Trainer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <header>
+      <h1>Dojo IPA Trainer</h1>
+      <p>Estudo de Pronúncia e Articulação Vetorial</p>
+    </header>
+
+    <!-- ÁREA DO PLAYER DE VISEME -->
+    <main class="player-section">
+      <div id="viseme-container"></div>
+      <div class="controls">
+        <h2 id="current-word">Think</h2>
+        <span id="current-ipa" class="badge">/θɪŋk/</span>
+        <button id="btn-animate" onclick="dispararViseme()">Articular Som</button>
+      </div>
+    </main>
+
+    <!-- DICIONÁRIO E SELEÇÃO DE PALAVRAS -->
+    <section class="dictionary-section">
+      <h3>Banco de Palavras</h3>
+      <ul id="word-list"></ul>
+    </section>
+  </div>
+
+  <script src="visemes-engine.js"></script>
+  <script src="data.js"></script>
+  <script>
+    let palavraAtual = DojoData.palavras[0];
+
+    function carregarPalavra(item) {
+      palavraAtual = item;
+      document.getElementById('current-word').innerText = item.palavra;
+      document.getElementById('current-ipa').innerText = item.ipa;
+      dispararViseme();
+    }
+
+    function dispararViseme() {
+      VisemeEngine.render(palavraAtual.fonema, 'viseme-container');
+    }
+
+    function renderizarLista() {
+      const lista = document.getElementById('word-list');
+      lista.innerHTML = '';
+      DojoData.palavras.forEach(item => {
+        const li = document.createElement('li');
+        li.className = `word-card status-${item.status}`;
+        li.innerHTML = `<strong>${item.palavra}</strong> <span>${item.ipa}</span>`;
+        li.onclick = () => carregarPalavra(item);
+        lista.appendChild(li);
+      });
+    }
+
+    window.onload = () => {
+      renderizarLista();
+      carregarPalavra(DojoData.palavras[0]);
+    };
+  </script>
+</body>
+</html>
